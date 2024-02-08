@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library App</title>
+  <style>
+    .book-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="library"></div>
+<button id="new-book-btn">Add New Book</button>
+
+<script>
+  let library = [];
+
+  function Book(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  }
+
+  Book.prototype.toggleReadStatus = function() {
+    this.read = !this.read;
+    renderLibrary();
+  };
+
+  function renderLibrary() {
+    const libraryDiv = document.getElementById('library');
+    libraryDiv.innerHTML = '';
+
+    library.forEach((book, index) => {
+      const bookCard = document.createElement('div');
+      bookCard.classList.add('book-card');
+      bookCard.innerHTML = `
+        <h2>${book.title}</h2>
+        <p>Author: ${book.author}</p>
+        <p>Pages: ${book.pages}</p>
+        <p>Read: ${book.read ? 'Yes' : 'No'}</p>
+        <button onclick="toggleRead(${index})">Toggle Read Status</button>
+        <button onclick="removeBook(${index})">Remove</button>
+      `;
+      libraryDiv.appendChild(bookCard);
+    });
+  }
+
+  function addBookToLibrary(title, author, pages, read) {
+    const newBook = new Book(title, author, pages, read);
+    library.push(newBook);
+    renderLibrary();
+  }
+
+  function removeBook(index) {
+    library.splice(index, 1);
+    renderLibrary();
+  }
+
+  function toggleRead(index) {
+    library[index].toggleReadStatus();
+  }
+
+  document.getElementById('new-book-btn').addEventListener('click', () => {
+    const title = prompt('Enter the title of the book:');
+    const author = prompt('Enter the author of the book:');
+    const pages = parseInt(prompt('Enter the number of pages:'));
+    const read = confirm('Have you read this book?');
+
+    addBookToLibrary(title, author, pages, read);
+  });
+
+  // Add some initial books
+  addBookToLibrary('The Great Gatsby', 'F. Scott Fitzgerald', 180, true);
+  addBookToLibrary('To Kill a Mockingbird', 'Harper Lee', 281, false);
+</script>
+
+</body>
+</html>
